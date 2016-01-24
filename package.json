@@ -11,6 +11,7 @@
   "dependencies": {
     "dynamic-module-loader": "^1.0.8",
     "express": "^4.13.4",
+    "rimraf": "^2.5.1",
     "winston": "^2.1.1"
   }
 }
