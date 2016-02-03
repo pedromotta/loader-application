@@ -4,6 +4,8 @@ var express = require('express');
 var logger = require('./logger');
 var dynamicLoader = require('./loader');
 var rimraf = require('rimraf');
+var async = require('async');
+var request = require('request');
 
 var LoaderApplication = function() {
   var app = express();
@@ -36,7 +38,7 @@ var LoaderApplication = function() {
       var hello = module.helloWorld();
 
       if (err) {
-          res.sendStatus(500);
+        res.sendStatus(500);
       } else {
         res.status(200).send(hello);
       }
@@ -55,6 +57,17 @@ var LoaderApplication = function() {
           res.status(200).send(body);
         }
       });
+    });
+  });
+
+  app.get('/v3/:port', function(req, res) {
+    request('http://localhost:' + req.params.port, function(error, response, body) {
+      if (error) {
+        logger.error(error);
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
     });
   });
 
@@ -78,8 +91,17 @@ var LoaderApplication = function() {
 
   app.delete('/modules/:name', function(req, res) {
     var name = req.params.name;
-    var modulePath = path.join(ROOT_PATH, '/modules/installed/' + name);
-    rimraf(modulePath, function(err) {
+    var moduleInstallPath = path.join(ROOT_PATH, '/modules/installed/' + name);
+    var moduleDownloadPath = path.join(ROOT_PATH, `/modules/downloads/${name}.zip`);
+
+    async.parallel([
+      function(callback) {
+        rimraf(moduleInstallPath, callback);
+      },
+      function(callback) {
+        rimraf(moduleDownloadPath, callback);
+      }
+    ], function(err, results) {
       if (err) {
         res.sendStatus(500);
       } else {
