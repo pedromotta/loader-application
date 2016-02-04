@@ -43,11 +43,10 @@ var LoaderApplication = function() {
         res.status(200).send(hello);
       }
     });
-
   });
 
   app.get('/v2/:name', function(req, res) {
-    loadModules(req.params.name, function(err, module) {
+    loadModules(req.params.name, function(errLoad, module) {
       module.get('1', function(err, body) {
         if (err) {
           logger.error(`Request error: ${err}`);
@@ -61,7 +60,7 @@ var LoaderApplication = function() {
   });
 
   app.get('/v3/:port', function(req, res) {
-    request('http://localhost:' + req.params.port, function(error, response, body) {
+    request('http://localhost:' + req.params.port, function(error) {
       if (error) {
         logger.error(error);
         res.sendStatus(500);
@@ -78,6 +77,7 @@ var LoaderApplication = function() {
       if (err) {
         res.sendStatus(500);
       } else {
+        dynamicLoader.evict(name);
         loadModules(function(err) {
           if (err) {
             res.sendStatus(500);
@@ -101,7 +101,7 @@ var LoaderApplication = function() {
       function(callback) {
         rimraf(moduleDownloadPath, callback);
       }
-    ], function(err, results) {
+    ], function(err) {
       if (err) {
         res.sendStatus(500);
       } else {
@@ -112,7 +112,6 @@ var LoaderApplication = function() {
 
   app.listen(5000, function() {
     logger.info('App listening on port 5000!');
-    //loadModules();
   });
 };
 

@@ -4,8 +4,8 @@ var path = require('path');
 var LockManager = require('hurt-locker').LockManager;
 var DynamicModuleLoader = require('dynamic-module-loader').DynamicModuleLoader;
 
-var Loader = function(dir) {
-  lockManager = new LockManager({
+var Loader = function() {
+  var lockManager = new LockManager({
     lockDir: path.join(ROOT_PATH, '/modules/locks')
   });
 

@@ -1,7 +1,7 @@
 var winston = require('winston');
 
 var formatter = function(options) {
-  var message = (undefined !== options.message ? options.message : '');
+  var message = (options.message ? options.message : '');
 
   var template = `{LOADER-APPLICATION} - ${options.timestamp.toISOString()} - [${options.level.toUpperCase()}] - ${message}`;
 
