@@ -113,6 +113,10 @@ var LoaderApplication = function() {
   app.listen(5000, function() {
     logger.info('App listening on port 5000!');
   });
+
+  process.on('uncaughtException', function(err) {
+    logger.error(err.stack);
+  });
 };
 
 module.exports = new LoaderApplication();
